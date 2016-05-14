@@ -39,9 +39,9 @@ var notificationsData = [];
 
 
 chrome.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
-  console.log(notificationId, buttonIndex);
   // if (notificationId == 'resultNotification') {
     if (buttonIndex == 0) { // кликнули на "Посмотреть на странице"
+
       // УМЕЕМ ПОКАЗЫВАТЬ ТОЛЬКО ОДНУ СТРАНИЦУ НА УВЕДОМЛЕНИЕ
       chrome.tabs.create({url: 'http://google.com'}, function(tab) {
         var data = notificationsData.pop();
@@ -50,54 +50,9 @@ chrome.notifications.onButtonClicked.addListener(function(notificationId, button
 
         // создаём форму в открытой табе, с методом POST и отправляем её
         chrome.tabs.executeScript(tab.id, {
-          'code':
-            // "document.body.style.backgroundColor='red';" +
-            "var form = document.createElement('form');" +
-            "form.setAttribute('method', 'POST');" +
-            "form.setAttribute('action', '" + url + "');" +
-
-            "var inputUser = document.createElement('input');" +
-            "inputUser.setAttribute('type', 'hidden');" +
-            "inputUser.setAttribute('name', 'USER');" +
-            "inputUser.setAttribute('value', '');" +
-
-            "var inputCommand = document.createElement('input');" +
-            "inputCommand.setAttribute('type', 'hidden');" +
-            "inputCommand.setAttribute('name', 'COMMAND');" +
-            "inputCommand.setAttribute('value', '10');" +
-
-            "var inputDialogCommand = document.createElement('input');" +
-            "inputDialogCommand.setAttribute('type', 'hidden');" +
-            "inputDialogCommand.setAttribute('name', 'DIALOGSPECCOMMAND');" +
-            "inputDialogCommand.setAttribute('value', '2');" +
-
-            "var inputCodeType = document.createElement('input');" +
-            "inputCodeType.setAttribute('type', 'hidden');" +
-            "inputCodeType.setAttribute('name', 'CODETYPE');" +
-            "inputCodeType.setAttribute('value', '1');" +
-
-            "var inputCodeSpec = document.createElement('input');" +
-            "inputCodeSpec.setAttribute('type', 'hidden');" +
-            "inputCodeSpec.setAttribute('name', 'CODESPEC');" +
-            "inputCodeSpec.setAttribute('value', '" + specId + "');" +
-
-            "var inputSelectUch = document.createElement('input');" +
-            "inputSelectUch.setAttribute('type', 'hidden');" +
-            "inputSelectUch.setAttribute('name', 'SELECTUCH');" +
-            "inputSelectUch.setAttribute('value', '');" +
-
-            "form.appendChild(inputUser);" +
-            "form.appendChild(inputCommand);" +
-            "form.appendChild(inputDialogCommand);" +
-            "form.appendChild(inputCodeType);" +
-            "form.appendChild(inputCodeSpec);" +
-            "form.appendChild(inputSelectUch);" +
-
-            "document.body.appendChild(form);" +
-            "form.submit();"
+          'code': CodeSnippets.createAndSendFormForDoctorsListBySpeciality(data.requestData.clinicId, data.requestData.specId)
         });
       });
-      console.log(notificationsData);
     }
     if (buttonIndex == 1) { // кликнули "Не нужен"
       chrome.notifications.clear(notificationId);
@@ -118,6 +73,14 @@ chrome.runtime.onMessage.addListener(function(message, sender, callback) {
 
 
 
+// Для разбора HTML, полученого по запросу
+var view = chrome.extension.getViews()[0];
+var loadedHtml = view.document.createElement('html');
+
+function $(selector) {
+  return loadedHtml.querySelectorAll(selector);
+}
+
 xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
   if (xhr.readyState != 4) {
     return;
@@ -130,7 +93,7 @@ xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
   // console.log(list);
 
   var enabledDoctors = $('button.SM_ACTIV[onClick*=codemed] span');
-  var data, notification;
+  var data;
 
   console.log(enabledDoctors);
   if (enabledDoctors.length > 0) {
@@ -147,16 +110,7 @@ xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
       ]
     };
 
-    // var i;
-    // for (i in enabledDoctors) {
-    //   var text = enabledDoctors[i].innerText;
-    //   if (text !== undefined && text !== '') {
-    //     data.items.push({'title': text, 'message': ''});
-    //   }
-    // }
-    // console.log(data);
-
-    notification = chrome.notifications.create('resultNotification' + requestData.specId, data, function(notificationId) {
+    chrome.notifications.create('resultNotification' + requestData.specId, data, function(notificationId) {
       // put notification data to storage
       notificationsData.push({'id': notificationId, requestData: requestData});
       // при закрытии уведомления - почистим и хранилище от него
