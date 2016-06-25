@@ -102,7 +102,7 @@ xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
       'type': 'basic',
       'title': requestData.clinic,
       'message': 'Есть свободные номерки: ' + requestData.spec,
-      'iconUrl': '128.png',
+      'iconUrl': 'img/128.png',
       'items': [],
       'buttons': [
         {'title': 'Посмотреть на странице'},

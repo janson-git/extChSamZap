@@ -1,0 +1,35 @@
+#content {
+    width: 350px;
+    height: 400px;
+}
+ul {
+    list-style: none;
+}
+
+#back {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/*********** FORMS **********/
+.form {
+    width: 250px;
+    margin: 10px 10px;
+}
+
+.formField {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.formField select, .formField button {
+    width: 100%;
+}
+
+.formLabel {
+    display: block;
+    margin: 5px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+

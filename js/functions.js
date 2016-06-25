@@ -5,6 +5,58 @@
 // xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=44&SELECTUCH="]);
 var Requests = {
 
+  getSpecialityList: function(clinicId, xhrCallback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState != 4) {
+        return;
+      }
+
+      xhrCallback(xhr, {
+        'clinicId': clinicId,
+        'clinic': clinics[clinicId].title
+      });
+    };
+
+    var clinicUrl = clinics[clinicId].url;
+
+    xhr.open('POST', clinicUrl, true);
+    xhr.send(["COMMAND=2&TITLE=1"]);
+  },
+
+  getDoctorListBySpeciality: function(clinicId, specCode, xhrCallback) {
+    if (specCode === undefined) {
+      return 'Не указана специализация для списка врачей';
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState != 4) {
+        return;
+      }
+
+      var spec = '';
+      for (i in clinics[clinicId].specialities) {
+        if (clinics[clinicId].specialities[i].code == specCode) {
+          spec = clinics[clinicId].specialities[i].title;
+          break;
+        }
+      }
+
+      xhrCallback(xhr, {
+        'clinicId': clinicId,
+        'specId': specCode,
+        'clinic': clinics[clinicId].title,
+        'spec': spec
+      });
+    };
+
+    var clinicUrl = clinics[clinicId].url;
+
+    xhr.open('POST', clinicUrl, true);
+    xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=" + specCode + "&SELECTUCH="]);
+  },
+
   getTicketsForSpeciality: function(clinicId, specialityCode, xhrCallback) {
     if (specialityCode === undefined) {
       return 'Не указана специализация для списка врачей';
@@ -47,7 +99,7 @@ var CodeSnippets = {
       "inputUser.setAttribute('value', '" + value + "');";
   },
   createAndSendFormForDoctorsListBySpeciality: function(clinicId, specId) {
-    var url = catalog.clinics[clinicId].url;
+    var url = clinics[clinicId].url;
 
     return "var form = document.createElement('form');" +
       "form.setAttribute('method', 'POST');" +
@@ -94,4 +146,65 @@ var CodeSnippets = {
       "form.submit();"
   }
 
+};
+
+var Renderer = {
+  renderClinicSelectForm: function(document) {
+    var formElement = document.getElementById('form');
+    formElement.innerHTML = '' +
+      '<div class="formField">' +
+      '<label for="clinic" class="formLabel">Выберите поликлинику:</label>' +
+      '<select id="clinic"></select>' +
+      '</div>' +
+      '<div class="formField">' +
+      '<button id="selectClinic" class="buttonNext">Далее</button>' +
+      '</div>';
+
+    var selectClinic = document.getElementById('clinic');
+    var options = [];
+    var i;
+    for (i in clinics) {
+      options.push(
+        '<option value="' + i + '">' + clinics[i]['title'] + '</option>'
+      );
+    }
+    selectClinic.innerHTML = options.join("\n");
+  },
+  renderSpecialitiesForm: function(document, formDataArray, clickCallback) {
+    var formElement = document.getElementById('form');
+    formElement.innerHTML = '';
+
+    for (var i in formDataArray) {
+      var field = document.createElement('div');
+      field.setAttribute('class', 'formField');
+
+      var el = document.createElement('button');
+      el.setAttribute('value', i);
+      el.innerText = formDataArray[i];
+
+      field.appendChild(el);
+      formElement.appendChild(field);
+
+      el.addEventListener('click', clickCallback);
+    }
+  },
+
+  renderDoctorsForm: function(document, formDataArray, clickCallback) {
+    var formElement = document.getElementById('form');
+    formElement.innerHTML = '';
+
+    for (var i in formDataArray) {
+      var field = document.createElement('div');
+      field.setAttribute('class', 'formField');
+
+      var el = document.createElement('button');
+      el.setAttribute('value', i);
+      el.innerText = formDataArray[i];
+
+      field.appendChild(el);
+      formElement.appendChild(field);
+
+      el.addEventListener('click', clickCallback);
+    }
+  }
 };
