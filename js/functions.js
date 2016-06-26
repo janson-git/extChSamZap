@@ -17,7 +17,7 @@ var Requests = {
         'clinic': clinics[clinicId].title
       });
     };
-
+console.log(clinicId);
     var clinicUrl = clinics[clinicId].url;
 
     xhr.open('POST', clinicUrl, true);
@@ -55,39 +55,6 @@ var Requests = {
 
     xhr.open('POST', clinicUrl, true);
     xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=" + specCode + "&SELECTUCH="]);
-  },
-
-  getTicketsForSpeciality: function(clinicId, specialityCode, xhrCallback) {
-    if (specialityCode === undefined) {
-      return 'Не указана специализация для списка врачей';
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState != 4) {
-        return;
-      }
-
-      var spec = '';
-      for (i in catalog.clinics[clinicId].specialities) {
-        if (catalog.clinics[clinicId].specialities[i].code == specialityCode) {
-          spec = catalog.clinics[clinicId].specialities[i].title;
-          break;
-        }
-      }
-
-      xhrCallback(xhr, {
-        'clinicId': clinicId,
-        'specId': specialityCode,
-        'clinic': catalog.clinics[clinicId].title,
-        'spec': spec
-      });
-    };
-
-    var clinicUrl = catalog.clinics[clinicId].url;
-
-    xhr.open('POST', clinicUrl, true);
-    xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=" + specialityCode + "&SELECTUCH="]);
   }
 };
 
@@ -149,26 +116,45 @@ var CodeSnippets = {
 };
 
 var Renderer = {
-  renderClinicSelectForm: function(document) {
+  renderClinicSelectForm: function(document, clickCallback) {
     var formElement = document.getElementById('form');
-    formElement.innerHTML = '' +
-      '<div class="formField">' +
-      '<label for="clinic" class="formLabel">Выберите поликлинику:</label>' +
-      '<select id="clinic"></select>' +
-      '</div>' +
-      '<div class="formField">' +
-      '<button id="selectClinic" class="buttonNext">Далее</button>' +
-      '</div>';
+    formElement.innerHTML = '';
 
-    var selectClinic = document.getElementById('clinic');
+    var field1 = document.createElement('div');
+    field1.setAttribute('class', 'formField');
+
+    var label = document.createElement('label');
+    label.setAttribute('class', 'formLabel');
+    label.setAttribute('for', 'clinic');
+    label.innerText = 'Выберите поликлинику:';
+
+    var select = document.createElement('select');
+    select.setAttribute('id', 'clinic');
+
     var options = [];
-    var i;
+    var i, selected;
     for (i in clinics) {
-      options.push(
-        '<option value="' + i + '">' + clinics[i]['title'] + '</option>'
-      );
+      selected = (i === clinicSelectedValue);
+      options.push('<option value="' + i + '" ' + (selected ? ' selected ' : '') +'>' + clinics[i]['title'] + '</option>');
     }
-    selectClinic.innerHTML = options.join("\n");
+    select.innerHTML = options.join("\n");
+
+    field1.appendChild(label);
+    field1.appendChild(select);
+
+    var field2 = document.createElement('div');
+    field2.setAttribute('class', 'formField');
+
+    var button = document.createElement('button');
+    button.setAttribute('class', 'buttonNext');
+    button.innerText = 'Далее';
+
+    field2.appendChild(button);
+
+    formElement.appendChild(field1);
+    formElement.appendChild(field2);
+
+    button.addEventListener('click', clickCallback);
   },
   renderSpecialitiesForm: function(document, formDataArray, clickCallback) {
     var formElement = document.getElementById('form');

@@ -9,9 +9,11 @@ function $(selector) {
   return loadedHtml.querySelector(selector);
 }
 
-
-// ГЛОБАЛЬНЫЕ ПРИВЯЗКИ К ЭЛЕМЕНТАМ
+// ГЛОБАЛЬНЫЕ ЗНАЧЕНИЯ И ПРИВЯЗКИ К ЭЛЕМЕНТАМ
 var clinicControl = document.getElementById('clinic');
+var clinicSelectedValue;
+var specSelectedValue;
+var currentStep = 1;
 
 // функции отрисовки отдельных элементов формы
 
@@ -24,9 +26,6 @@ chrome.storage.local.get(['clinicId','specialityIds'], function(items) {
 
 
 /////////////////// Регистрируем обработчики изменений
-// clinicControl.addEventListener('change', function(e) {
-//   console.log(e.target.value);
-// });
 
 function parseListDataOnPage() {
   // варианты на выбор передаются в <input id="listreturn">
@@ -40,33 +39,43 @@ function parseListDataOnPage() {
   return spec;
 }
 
-function goForSpecSelect(e) {
-    // Сделаем запрос на список доступных специальностей в поликлинике
-    Requests.getSpecialityList(clinicControl.value, function(xhr, requestData) {
-      console.log('SPECIALITIES LIST:', xhr);
-
-      loadedHtml.innerHTML = xhr.responseText;
-      var spec = parseListDataOnPage();
-      console.log(spec);
-      //
-      // var enabledDoctors = $('button.SM_ACTIV[onClick*=codemed] span');
-      // var data;
-
-      // TODO: РИСУЕМ ФОРМУ ВЫБОРА СПЕЦИАЛЬНОСТИ
-      Renderer.renderSpecialitiesForm(document, spec, specClicked);
-    });
+function goForClinicSelect(e) {
+  // РИСУЕМ ФОРМУ ВЫБОРА КЛИНИКИ
+  Renderer.renderClinicSelectForm(document, clinicSelectCallback);
+  currentStep = 1;
+  document.getElementById('back').setAttribute('class', 'hide');
 }
 
-function specClicked(e) {
-  goForDoctorSelect(e);
+function clinicSelectCallback(e) {
+  console.log(e.target, document.getElementById('clinic'));
+  var clinicControlLocal = document.getElementById('clinic');
+  clinicSelectedValue = clinicControlLocal.value;
+  goForSpecSelect();
 }
-
-function goForDoctorSelect(e) {
-  var clinicId = clinicControl.value;
-  var specCode = e.target.value;
-
+function goForSpecSelect() {
   // Сделаем запрос на список доступных специальностей в поликлинике
-  Requests.getDoctorListBySpeciality(clinicControl.value, specCode, function(xhr, requestData) {
+  Requests.getSpecialityList(clinicSelectedValue, function(xhr, requestData) {
+    console.log('SPECIALITIES LIST:', xhr);
+
+    loadedHtml.innerHTML = xhr.responseText;
+    var spec = parseListDataOnPage();
+    console.log(spec);
+
+    // РИСУЕМ ФОРМУ ВЫБОРА СПЕЦИАЛЬНОСТИ
+    Renderer.renderSpecialitiesForm(document, spec, specSelectCallback);
+    currentStep = 2;
+    document.getElementById('back').setAttribute('class', '');
+  });
+}
+
+function specSelectCallback(e) {
+  specSelectedValue = e.target.value;
+  goForDoctorSelect();
+}
+
+function goForDoctorSelect() {
+  // Сделаем запрос на список доступных специальностей в поликлинике
+  Requests.getDoctorListBySpeciality(clinicSelectedValue, specSelectedValue, function(xhr, requestData) {
     console.log('DOCTORS LIST:', xhr);
 
     loadedHtml.innerHTML = xhr.responseText;
@@ -74,12 +83,14 @@ function goForDoctorSelect(e) {
     // варианты на выбор передаются в <input id="listreturn">
     var doctors = parseListDataOnPage();
     console.log(doctors);
-    //
-    // var enabledDoctors = $('button.SM_ACTIV[onClick*=codemed] span');
-    // var data;
 
-    // TODO: РИСУЕМ ФОРМУ ВЫБОРА СПЕЦИАЛЬНОСТИ
+    var enabledDoctors = $('button.SM_ACTIV[onClick*=codemed] span');
+    console.log(enabledDoctors);
+
+    // РИСУЕМ ФОРМУ ВЫБОРА ВРАЧА
     Renderer.renderDoctorsForm(document, doctors, doctorClicked);
+    currentStep = 3;
+    document.getElementById('back').setAttribute('class', '');
   });
 }
 
@@ -87,7 +98,22 @@ function doctorClicked(e) {
   console.log('DOCTOR CLICKED:', e.target);
 }
 
-document.getElementById('selectClinic').addEventListener('click', goForSpecSelect);
+
+function goBackOneStep(e) {
+  var backStep = currentStep - 1;
+  switch (backStep) {
+    case 2:
+      goForSpecSelect();
+      break;
+    default:
+      goForClinicSelect();
+  }
+}
+
+// document.getElementById('selectClinic').addEventListener('click', goForSpecSelect);
+document.getElementById('back').addEventListener('click', goBackOneStep);
+goForClinicSelect();
+
 
 //
 // document.getElementById('searchButton').addEventListener('click', function(e) {
@@ -129,16 +155,6 @@ document.getElementById('selectClinic').addEventListener('click', goForSpecSelec
 //    Там будут хранится настройки расширения между запусками браузера и т.д.
 //    Туда и нам нужно будет сохранять выбраные пользователем настройки.
 
-// 1. отрисуем селектор поликлиник
-var selectClinic = document.getElementById('clinic');
-var options = [];
-var i;
-for (i in clinics) {
-  options.push(
-    '<option value="' + i + '">' + clinics[i]['title'] + '</option>'
-  );
-}
-selectClinic.innerHTML = options.join("\n");
 
 // console.log('STORAGE', chrome.storage.StorageArea.get(['clinic', 'specialities']));
 

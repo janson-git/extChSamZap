@@ -1,6 +1,7 @@
 #content {
     width: 350px;
-    height: 400px;
+    height: 200px;
+    overflow: scroll;
 }
 ul {
     list-style: none;
@@ -10,6 +11,10 @@ ul {
     color: blue;
     text-decoration: underline;
     cursor: pointer;
+}
+
+.hide {
+    display: none;
 }
 
 /*********** FORMS **********/
