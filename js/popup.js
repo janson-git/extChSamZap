@@ -84,7 +84,14 @@ function goForDoctorSelect() {
     var doctors = parseListDataOnPage();
     console.log(doctors);
 
-    var enabledDoctors = $('button.SM_ACTIV[onClick*=codemed] span');
+    // TODO: выведем в списке докторов количество номерков у них в настоящий момент
+    var enabledItems = $('button.SM_ACTIV[onClick*=codemed]');
+    console.log('ITEMS', enabledItems);
+    var enabledDoctors = [], onclick;
+    for (var i in enabledItems) {
+      onclick = enabledItems[i];
+      enabledDoctors.push(onclick);
+    }
     console.log(enabledDoctors);
 
     // РИСУЕМ ФОРМУ ВЫБОРА ВРАЧА
