@@ -4,26 +4,39 @@
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-<h3>Отслеживать номерки:</h3>
 
-<div id="content">
-
-  <div id="back" class="hide">Назад</div>
-
-  <div class="form" id="form">
-    <div class="formField">
-      <label for="clinic" class="formLabel">Выберите поликлинику:</label>
-      <select id="clinic"></select>
+<div id="page">
+  <h3>Отслеживать номерки:</h3>
+  
+  <div id="nav">
+    <div id="back" class="hide">Назад</div>
+  </div>
+  
+  <div id="content">
+    <div class="form" id="form">
+      <div class="formField">
+        <label for="clinic" class="formLabel">Выберите поликлинику:</label>
+        <select id="clinic"></select>
+      </div>
+  
+      <div class="formField">
+        <button id="selectClinic" class="buttonNext">Далее</button>
+      </div>
     </div>
-
-    <div class="formField">
-      <button id="selectClinic" class="buttonNext">Далее</button>
-    </div>
+  
   </div>
 
 </div>
+
+
 <script src="../js/collections.js"></script>
-<script src="../js/functions.js"></script>
-<script src="../js/popup.js"></script>
+
+<script src="/js/react/react.js"></script>
+<script src="/js/react/react-dom.js"></script>
+<script src="/js/react/browser.min.js"></script>
+<script type="text/babel" src="/js/app.js"></script>
+
+<!--<script src="../js/functions.js"></script>-->
+<!--<script src="../js/popup.js"></script>-->
 </body>
 </html>
