@@ -38,3 +38,9 @@ ul {
     font-weight: 600;
 }
 
+.error {
+    padding: 5px;
+    background-color: #fdc;
+    border: 1px solid #000;
+    color: #000;
+}

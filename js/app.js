@@ -1,3 +1,30 @@
+// Для разбора HTML, полученого по запросу
+var view = chrome.extension.getViews()[0];
+var loadedHtml = view.document.createElement('html');
+
+function $(selector) {
+  if (selector.indexOf('#') !== 0) {
+    return loadedHtml.querySelectorAll(selector);
+  }
+  return loadedHtml.querySelector(selector);
+}
+
+/**
+ * Ищет в загруженом документе тег input id="listreturn" и вытаскивает оттуда данные
+ * @returns {Array}
+ */
+function parseListDataOnPage() {
+  // варианты на выбор передаются в <input id="listreturn">
+  var listStr = $('#listreturn').value;
+  var list = listStr.split(';');
+  var vals = []; // array of {specKey: specTitle} pairs
+  for (var i in list) {
+    var s = list[i].split('-');
+    vals.push({id: s[0], title: s[1]});
+  }
+  return vals;
+}
+
 window.ee = new EventEmitter();
 
 
@@ -16,6 +43,9 @@ var Nav = React.createClass({
     )
   }
 });
+
+
+
 var ClinicOption = React.createClass({
   render: function() {
     var selected = this.props.data.selected ? 'selected' : '';
@@ -26,6 +56,28 @@ var ClinicOption = React.createClass({
     }
     return (
       <option value={this.props.data.id} >{this.props.data.title}</option>
+    );
+  }
+});
+
+var OptionButton = React.createClass({
+  componentDidMount: function() {
+    var self = this;
+    ReactDOM.findDOMNode(this.refs[this.props.data.id]).addEventListener('click', this.onButtonClick);
+  },
+  componentWillUnmount: function() {
+    ReactDOM.findDOMNode(this.refs[this.props.data.id]).removeEventListener('click', this.onButtonClick);
+  },
+  onButtonClick: function(e) {
+    console.log(e.target);
+    e.preventDefault();
+    ee.emit('Buttons.next', {specId: e.target.value});
+  },
+  render: function() {
+    return (
+      <div className="formField">
+        <button value={this.props.data.id} ref={this.props.data.id}>{this.props.data.title}</button>
+      </div>
     );
   }
 });
@@ -75,7 +127,31 @@ var PageContent = React.createClass({
         break;
 
       case 2:
-        pageTemplate = <b>Template page #{pageToRender}</b>;
+        // Сделаем запрос на список доступных специальностей в поликлинике
+        var response = Request.getSpecialityList(this.props.selectedClinicId);
+
+        if (response.status !== 200) {
+          // ERROR
+          pageTemplate = <p className="error">Произошла ошибка при обращении к поликлинике. Попробуйте позже.</p>;
+        } else {
+          loadedHtml.innerHTML = response.responseText;
+          var responseData = parseListDataOnPage();
+
+          pageTemplate = <div className="form" id="form">
+            <div className="formField">
+              {responseData.map(function (item, index) {
+                return (
+                  <OptionButton key={item.id} data={item}/>
+                )
+              })}
+            </div>
+          </div>;
+        }
+        break;
+      case 3:
+        console.log('SPEC SELECTED: ' + this.props.selectedSpecId);
+        alert('SPEC SELECTED: ' + this.props.selectedSpecId);
+        pageTemplate = <b>Page num {pageToRender} template not defined</b>;
         break;
       default:
         pageTemplate = <b>Page num {pageToRender} template not defined</b>;
@@ -94,7 +170,8 @@ var App = React.createClass({
   getInitialState: function() {
     return {
       page: 1,
-      clinicId: undefined
+      clinicId: undefined,
+      specId: undefined
     };
   },
   componentDidMount: function() {
@@ -110,6 +187,7 @@ var App = React.createClass({
           state.clinicId = data.clinicId;
           break;
         case 2:
+          state.specId = data.specId;
           break;
         default:
           break;
@@ -133,7 +211,8 @@ var App = React.createClass({
         <div>
           <Nav pageNum={this.state.page}/>
           <PageContent pageNum={this.state.page}
-                       selectedClinicId={this.state.clinicId}/>
+                       selectedClinicId={this.state.clinicId}
+                       selectedSpecId={this.state.specId}/>
         </div>
     )
   }
