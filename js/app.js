@@ -1,3 +1,6 @@
+window.ee = new EventEmitter();
+
+
 var Nav = React.createClass({
   render: function() {
     return(
@@ -9,33 +12,36 @@ var Nav = React.createClass({
 });
 var ClinicSelect = React.createClass({
   render: function() {
-    var optionTemplate = Object.keys(clinics).map(function(key, index) {
-      var item = clinics[key];
-      return (
-          <option value={key}>{item.title}</option>
-      )
-    });
-    
     return (
-      <select id="clinic">
-        {optionTemplate}
-      </select>
+      <option value={this.props.data.id}>{this.props.data.title}</option>
     )
   }
 });
 
 var PageContent = React.createClass({
+  nextButtonClick: function(e) {
+    e.preventDefault();
+    ee.emit('Buttons.next');
+  },
   render: function() {
     return(
         <div id="content" className="content">
           <div className="form" id="form">
             <div className="formField">
               <label htmlFor="clinic" className="formLabel">Выберите поликлинику:</label>
-              <ClinicSelect />
+              <select id="clinic">
+                {Object.keys(clinics).map(function(key, index) {
+                  var item = clinics[key];
+                  item.id = key;
+                  return (
+                    <ClinicSelect key={key} data={item} />
+                  )
+                })}
+              </select>
             </div>
 
-            <div class="formField">
-              <button id="selectClinic" className="buttonNext">Далее</button>
+            <div className="formField">
+              <button id="selectClinic" className="buttonNext" onClick={this.nextButtonClick}>Далее</button>
             </div>
           </div>
         </div>
@@ -44,11 +50,26 @@ var PageContent = React.createClass({
 });
 
 var App = React.createClass({
+  getInitialState: function() {
+    return {
+      page: 1
+    };
+  },
+  componentDidMount: function() {
+    var self = this;
+    window.ee.addListener('Buttons.next', function() {
+      self.setState({page: ++self.state.page});
+      console.log('event Buttons.next catched!', self.state.page);
+    });
+  },
+  componentWillUnmount: function() {
+    window.ee.removeListener('News.add');
+  },
   render: function() {
     return(
         <div>
           <Nav />
-          <PageContent />
+          <PageContent pageNum={this.state.page}/>
         </div>
     )
   }
