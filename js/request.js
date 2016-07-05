@@ -5,23 +5,23 @@
 // xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=44&SELECTUCH="]);
 var Request = {
 
-  getSpecialityList: function(clinicId) {
+  getSpecialityList: function(clinicId, callback) {
     var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState != 4) {
+        return;
+      }
 
-    console.log(clinicId);
+      callback(xhr, {
+        'clinicId': clinicId,
+        'clinic': clinics[clinicId].title
+      });
+    };
+    
     var clinicUrl = clinics[clinicId].url;
 
-    xhr.open('POST', clinicUrl, false);
-    try {
-      xhr.send(["COMMAND=2&TITLE=1"]);
-
-      if (xhr.status !== 200) {
-        console.error('getSpecialityList ERROR: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    } catch (ex) {
-      console.error(ex);
-    }
-    return xhr;
+    xhr.open('POST', clinicUrl, true);
+    xhr.send(["COMMAND=2&TITLE=1"]);
   },
 
   getDoctorListBySpeciality: function(clinicId, specCode, xhrCallback) {

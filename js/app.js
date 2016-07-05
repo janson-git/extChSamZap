@@ -82,20 +82,92 @@ var OptionButton = React.createClass({
   }
 });
 
-var PageContent = React.createClass({
-  onChangeSelect: function(e) {
-    e.preventDefault();
-    this.setState({clinicId: e.target.value});
-  },
+
+var PageSelectClinic = React.createClass({
   nextButtonClick: function(e) {
     e.preventDefault();
-    ee.emit('Buttons.next', {clinicId: this.state.clinicId});
+    ee.emit('Buttons.next', {clinicId: ReactDOM.findDOMNode(this.refs.clinicId).value});
   },
+  render: function() {
+    var self = this;
+    return(
+      <div className="form" id="form">
+        <div className="formField">
+          <label htmlFor="clinic" className="formLabel">Выберите поликлинику:</label>
+          <select id="clinic" ref="clinicId">
+            {Object.keys(clinics).map(function (key, index) {
+              var item = clinics[key];
+              item.id = key;
+              item.selected = (key === self.props.selectedClinicId);
+
+              return (
+                  <ClinicOption key={key} data={item}/>
+              )
+            })}
+          </select>
+        </div>
+
+        <div className="formField">
+          <button id="selectClinic" className="buttonNext" onClick={this.nextButtonClick}>Далее</button>
+        </div>
+      </div>
+    );
+  }
+});
+
+var PageSelectSpec = React.createClass({
   getInitialState: function() {
     return {
-      clinicId: Object.keys(clinics)[0]
+      error: false,
+      loaded: false,
+      data: []
     }
   },
+  componentDidMount: function() {
+    // Сделаем запрос на список доступных специальностей в поликлинике
+    console.log('componentDidMount: this.props.selectedClinicId: ', this.props.selectedClinicId);
+    Request.getSpecialityList(
+      this.props.selectedClinicId, 
+      function(response) {
+        if (response.status !== 200) {
+          this.setState({error: true});
+        } else {
+          loadedHtml.innerHTML = response.responseText;
+          this.setState({error: false, loaded: true, data: parseListDataOnPage()});
+        }
+      }.bind(this)
+    );
+  },
+  render: function() {
+    var pageTemplate;
+
+    if (this.state.error) {
+      pageTemplate = <p className="error">Произошла ошибка при обращении к поликлинике. Попробуйте позже.</p>;
+    } else {
+      if (this.state.loaded) {
+        pageTemplate = <div className="form" id="form">
+          <div className="formField">
+            {this.state.data.map(function (item, index) {
+              return (
+                <OptionButton key={item.id} data={item}/>
+              )
+            })}
+          </div>
+        </div>;
+      } else {
+        pageTemplate = <div className="preloader"></div>;
+      }
+    }
+        
+    return(
+        <div id="content" className="content">
+          {pageTemplate}
+        </div>
+    );
+  }
+});
+
+var PageContent = React.createClass({
   render: function() {
     var self = this;
     var pageToRender = this.props.pageNum;
@@ -104,49 +176,11 @@ var PageContent = React.createClass({
     var pageTemplate;
     switch (pageToRender) {
       case 1:
-        pageTemplate = <div className="form" id="form">
-          <div className="formField">
-            <label htmlFor="clinic" className="formLabel">Выберите поликлинику:</label>
-            <select id="clinic" onChange={this.onChangeSelect}>
-              {Object.keys(clinics).map(function (key, index) {
-                var item = clinics[key];
-                item.id = key;
-                item.selected = (key === self.props.selectedClinicId);
-
-                return (
-                  <ClinicOption key={key} data={item}/>
-                )
-              })}
-            </select>
-          </div>
-
-          <div className="formField">
-            <button id="selectClinic" className="buttonNext" onClick={this.nextButtonClick}>Далее</button>
-          </div>
-        </div>;
+        pageTemplate = <PageSelectClinic selectedClinicId={this.props.selectedClinicId} />;
         break;
 
       case 2:
-        // Сделаем запрос на список доступных специальностей в поликлинике
-        var response = Request.getSpecialityList(this.props.selectedClinicId);
-
-        if (response.status !== 200) {
-          // ERROR
-          pageTemplate = <p className="error">Произошла ошибка при обращении к поликлинике. Попробуйте позже.</p>;
-        } else {
-          loadedHtml.innerHTML = response.responseText;
-          var responseData = parseListDataOnPage();
-
-          pageTemplate = <div className="form" id="form">
-            <div className="formField">
-              {responseData.map(function (item, index) {
-                return (
-                  <OptionButton key={item.id} data={item}/>
-                )
-              })}
-            </div>
-          </div>;
-        }
+        pageTemplate = <PageSelectSpec selectedClinicId={this.props.selectedClinicId} />;
         break;
       case 3:
         console.log('SPEC SELECTED: ' + this.props.selectedSpecId);
