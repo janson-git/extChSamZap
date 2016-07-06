@@ -72,3 +72,6 @@ var clinics = {
     'url': 'http://94.19.37.202:3075/cgi-bin/tcgi1.exe'
   }
 };
+
+
+module.exports = clinics;

@@ -1,3 +1,10 @@
+var EventEmitter = require('modules/EventEmitter');
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var clinics = require('modules/clinics');
+var Request = require('modules/request');
+
 // Для разбора HTML, полученого по запросу
 var view = chrome.extension.getViews()[0];
 var loadedHtml = view.document.createElement('html');

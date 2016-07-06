@@ -1,3 +1,4 @@
+var clinics = require('modules/clinics');
 
 /////////// REQUESTS ////////////////
 // запрос на список врачей (44 - невропатолог)
@@ -57,3 +58,5 @@ var Request = {
     xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=" + specCode + "&SELECTUCH="]);
   }
 };
+
+module.exports = Request;
