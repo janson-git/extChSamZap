@@ -1,3 +1,4 @@
+var path = require('path');
 var webpack = require('webpack');
 
 var babelPlugin = new webpack.DefinePlugin({
@@ -7,10 +8,7 @@ var babelPlugin = new webpack.DefinePlugin({
   test: /\.jsx?$/,         // Match both .js and .jsx files
   exclude: /node_modules/,
   loader: "babel",
-  query:
-  {
-    presets:['react']
-  }
+  query: { presets:['react'] }
 });
 
 
@@ -18,7 +16,7 @@ module.exports = {
   entry: ['./js/app.js'],
   devtool: "inline-source-map",
   output: {
-    path: '/home/janson/Works/www/ChromeExtension/public',
+    path: path.join(__dirname, 'public'),
     filename: 'index.js',
     publicPath: '/public/'
   },
@@ -30,15 +28,8 @@ module.exports = {
     babelPlugin
   ],
   module: {
-    loaders: [
-      {
-        test: /\.js(x)?$/,
-        exclude: /(node_modules)/,
-        loaders: ['babel']
-      }
-    ]
+    loaders: []
   },
-
   devServer: {
     stats: 'errors-only',
 
