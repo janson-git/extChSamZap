@@ -2,7 +2,7 @@ var EventEmitter = require('modules/EventEmitter');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var clinics = require('modules/clinics');
+var Clinics = require('modules/Clinics');
 var Request = require('modules/request');
 
 // Для разбора HTML, полученого по запросу
@@ -102,8 +102,8 @@ var PageSelectClinic = React.createClass({
         <div className="formField">
           <label htmlFor="clinic" className="formLabel">Выберите поликлинику:</label>
           <select id="clinic" ref="clinicId">
-            {Object.keys(clinics).map(function (key, index) {
-              var item = clinics[key];
+            {Object.keys(Clinics).map(function (key, index) {
+              var item = Clinics[key];
               item.id = key;
               item.selected = (key === self.props.selectedClinicId);
 

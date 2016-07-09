@@ -1,4 +1,4 @@
-var clinics = require('modules/clinics');
+var clinics = require('modules/Clinics');
 
 /////////// REQUESTS ////////////////
 // запрос на список врачей (44 - невропатолог)

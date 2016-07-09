@@ -14,11 +14,11 @@ var Requests = {
 
       xhrCallback(xhr, {
         'clinicId': clinicId,
-        'clinic': clinics[clinicId].title
+        'clinic': Clinics[clinicId].title
       });
     };
 console.log(clinicId);
-    var clinicUrl = clinics[clinicId].url;
+    var clinicUrl = Clinics[clinicId].url;
 
     xhr.open('POST', clinicUrl, true);
     xhr.send(["COMMAND=2&TITLE=1"]);
@@ -36,9 +36,9 @@ console.log(clinicId);
       }
 
       var spec = '';
-      for (i in clinics[clinicId].specialities) {
-        if (clinics[clinicId].specialities[i].code == specCode) {
-          spec = clinics[clinicId].specialities[i].title;
+      for (i in Clinics[clinicId].specialities) {
+        if (Clinics[clinicId].specialities[i].code == specCode) {
+          spec = Clinics[clinicId].specialities[i].title;
           break;
         }
       }
@@ -46,12 +46,12 @@ console.log(clinicId);
       xhrCallback(xhr, {
         'clinicId': clinicId,
         'specId': specCode,
-        'clinic': clinics[clinicId].title,
+        'clinic': Clinics[clinicId].title,
         'spec': spec
       });
     };
 
-    var clinicUrl = clinics[clinicId].url;
+    var clinicUrl = Clinics[clinicId].url;
 
     xhr.open('POST', clinicUrl, true);
     xhr.send(["USER=&COMMAND=10&DIALOGSPECCOMMAND=2&CODETYPE=&CODESPEC=" + specCode + "&SELECTUCH="]);
@@ -66,7 +66,7 @@ var CodeSnippets = {
       "inputUser.setAttribute('value', '" + value + "');";
   },
   createAndSendFormForDoctorsListBySpeciality: function(clinicId, specId) {
-    var url = clinics[clinicId].url;
+    var url = Clinics[clinicId].url;
 
     return "var form = document.createElement('form');" +
       "form.setAttribute('method', 'POST');" +
@@ -133,9 +133,9 @@ var Renderer = {
 
     var options = [];
     var i, selected;
-    for (i in clinics) {
+    for (i in Clinics) {
       selected = (i === clinicSelectedValue);
-      options.push('<option value="' + i + '" ' + (selected ? ' selected ' : '') +'>' + clinics[i]['title'] + '</option>');
+      options.push('<option value="' + i + '" ' + (selected ? ' selected ' : '') +'>' + Clinics[i]['title'] + '</option>');
     }
     select.innerHTML = options.join("\n");
 

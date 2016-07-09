@@ -1,4 +1,4 @@
-var clinics = {
+var Clinics = {
   'spo13': { // относится к ГП 8
     'title': 'Стоматологическая поликлиника 13',
     'url': 'http://94.19.37.202:3042/cgi-bin/tcgi1.exe'
@@ -74,4 +74,4 @@ var clinics = {
 };
 
 
-module.exports = clinics;
+module.exports = Clinics;

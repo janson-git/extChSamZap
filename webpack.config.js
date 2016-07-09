@@ -8,7 +8,10 @@ var babelPlugin = new webpack.DefinePlugin({
   test: /\.jsx?$/,         // Match both .js and .jsx files
   exclude: /node_modules/,
   loader: "babel",
-  query: { presets:['react'] }
+  query:
+  {
+    presets:['react']
+  }
 });
 
 
@@ -28,8 +31,18 @@ module.exports = {
     babelPlugin
   ],
   module: {
-    loaders: []
+    loaders: [
+      {
+        test: /\.js(x)?$/,
+        exclude: /(node_modules)/,
+        loader: 'babel',
+        query: {
+          presets:['react']
+        }
+      }
+    ]
   },
+
   devServer: {
     stats: 'errors-only',
 
