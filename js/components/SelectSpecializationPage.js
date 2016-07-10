@@ -22,7 +22,17 @@ var PageSelectSpec = React.createClass({
           this.setState({error: true});
         } else {
           window.loadedHtml.innerHTML = response.responseText;
-          this.setState({error: false, loaded: true, data: window.parseListDataOnPage()});
+          var data = window.parseListDataOnPage();
+          var counters = window.parsePageForTicketCounts('codespec');
+
+          data.map(function(item, index) {
+            var count = 0;
+            if (counters[ item.id ] !== undefined) {
+              count = counters[item.id];
+            }
+            data[index]['counter'] = count;
+          });
+          this.setState({error: false, loaded: true, data: data});
         }
       }.bind(this)
     );

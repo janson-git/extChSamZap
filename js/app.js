@@ -29,6 +29,35 @@ window.parseListDataOnPage = function() {
   return vals;
 };
 
+/**
+ * Ищет в загруженом документе активные (зелёные) кнопки с номерками докторов
+ * @param type string Возможные значения 'codemed' (кнопки докторов), 'codespec' (кнопки специальностей)
+ * @return {Object}
+ */
+window.parsePageForTicketCounts = function(type) {
+  var onclickValue = type || 'codemed';
+  var counters = {};
+
+  var enabledDoctors = $('button.SM_ACTIV[onClick*=' + onclickValue + ']');
+  var i;
+  for (i in enabledDoctors) {
+    var item = enabledDoctors[i];
+    if (typeof item === 'object' && item.hasAttribute('onclick')) {
+      var reg = new RegExp(".*" + onclickValue + "\.value='([^']*)'", 'i');
+      // var reg = /.*codemed\.value='([^']*)'/i;
+      var itemId = reg.exec(item.getAttribute('onclick'))[1];
+
+      // распарсим количество номерков с кнопки
+      var buttonText = item.querySelector('span').innerText;
+      var ticketsNum = /.*НОМЕРКОВ:\s?([\d]*).*/i.exec(buttonText)[1];
+
+      counters[itemId + ''] = parseInt(ticketsNum);
+    }
+  }
+  return counters;
+};
+
+
 
 
 var React = require('react');
@@ -96,7 +125,13 @@ var App = React.createClass({
           state.clinicId = data.clinicId;
           break;
         case 2:
-          state.specId = data.specId;
+          state.specId = data.value;
+          break;
+        case 3:
+          // кликнули на доктора
+          state.doctorId = data.value;
+          console.log('DOCTOR SELECT!', data);
+          // TODO: сохраним всё в хранилище и выбросим событие, что надо отслеживать доктора
           break;
         default:
           break;

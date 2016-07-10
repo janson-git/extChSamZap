@@ -13,10 +13,7 @@ var Request = {
         return;
       }
 
-      callback(xhr, {
-        'clinicId': clinicId,
-        'clinic': clinics[clinicId].title
-      });
+      callback(xhr);
     };
     
     var clinicUrl = clinics[clinicId].url;
@@ -25,7 +22,7 @@ var Request = {
     xhr.send(["COMMAND=2&TITLE=1"]);
   },
 
-  getDoctorListBySpeciality: function(clinicId, specCode, xhrCallback) {
+  getDoctorListBySpeciality: function(clinicId, specCode, callback) {
     if (specCode === undefined) {
       return 'Не указана специализация для списка врачей';
     }
@@ -36,20 +33,7 @@ var Request = {
         return;
       }
 
-      var spec = '';
-      for (i in clinics[clinicId].specialities) {
-        if (clinics[clinicId].specialities[i].code == specCode) {
-          spec = clinics[clinicId].specialities[i].title;
-          break;
-        }
-      }
-
-      xhrCallback(xhr, {
-        'clinicId': clinicId,
-        'specId': specCode,
-        'clinic': clinics[clinicId].title,
-        'spec': spec
-      });
+      callback(xhr);
     };
 
     var clinicUrl = clinics[clinicId].url;
