@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var OptionButton = React.createClass({
+var OptionFollowButton = React.createClass({
   componentDidMount: function() {
     var self = this;
     ReactDOM.findDOMNode(this.refs[this.props.data.id]).addEventListener('click', this.onButtonClick);
@@ -12,14 +12,13 @@ var OptionButton = React.createClass({
   onButtonClick: function(e) {
     console.log(e.target);
     e.preventDefault();
-    ee.emit('Buttons.next', {value: e.target.value});
+    ee.emit('Buttons.follow', {value: e.target.value});
   },
   render: function() {
-    // TODO: если this.props.data.counter существует, то добавим классы: красный для 0 и зелёный для остального
     return (
-        <button className="option" value={this.props.data.id} ref={this.props.data.id}>{this.props.data.title} : {this.props.data.counter}</button>
+        <button className="follow" value={this.props.data.id} ref={this.props.data.id}>Следить</button>
     );
   }
 });
 
-module.exports = OptionButton;
+module.exports = OptionFollowButton;
