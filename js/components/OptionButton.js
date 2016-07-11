@@ -1,14 +1,6 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
 
 var OptionButton = React.createClass({
-  componentDidMount: function() {
-    var self = this;
-    ReactDOM.findDOMNode(this.refs[this.props.data.id]).addEventListener('click', this.onButtonClick);
-  },
-  componentWillUnmount: function() {
-    ReactDOM.findDOMNode(this.refs[this.props.data.id]).removeEventListener('click', this.onButtonClick);
-  },
   onButtonClick: function(e) {
     console.log(e.target);
     e.preventDefault();
@@ -16,8 +8,11 @@ var OptionButton = React.createClass({
   },
   render: function() {
     // TODO: если this.props.data.counter существует, то добавим классы: красный для 0 и зелёный для остального
+    var id = this.props.data.id;
+    var title = this.props.data.title;
+    var counter = this.props.data.counter || 0;
     return (
-        <button className="option" value={this.props.data.id} ref={this.props.data.id}>{this.props.data.title} : {this.props.data.counter}</button>
+        <button className="option" onClick={this.onButtonClick} value={id}>{title} : {counter}</button>
     );
   }
 });
