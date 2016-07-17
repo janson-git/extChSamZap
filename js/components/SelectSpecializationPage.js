@@ -52,7 +52,7 @@ var PageSelectSpec = React.createClass({
               return (
                 <div className="buttonGroup">
                   <OptionButton key={item.id} data={item}/>
-                  <OptionFollowButton key={followId} data={item}/>
+                  <OptionFollowButton key={followId} data={item} type="spec"/>
                 </div>
               )
             })}

@@ -145,6 +145,13 @@ var App = React.createClass({
       self.setState({page: self.state.page - 1});
       console.log('event Buttons.back catched!', self.state.page);
     });
+
+    window.ee.addListener('Buttons.follow', function(data) {
+      console.log('data of follow: ', data);
+
+      // TODO: при нажатии на кнопку "Следить" надо сохранять в Local Storage
+      // TODO: и запускать фоновый процесс.
+    });
   },
   componentWillUnmount: function() {
     window.ee.removeListener('Buttons.next');
