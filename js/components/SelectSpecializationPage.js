@@ -64,7 +64,7 @@ var PageSelectSpec = React.createClass({
     }
 
     return(
-      <div id="content" className="content">
+      <div>
         {pageTemplate}
       </div>
     );

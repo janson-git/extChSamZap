@@ -3,6 +3,7 @@ var React = require('react');
 var Request = require('modules/request');
 
 var OptionButton = require('components/OptionButton');
+var OptionFollowButton = require('components/OptionFollowButton');
 
 var SelectDoctorPage = React.createClass({
   getInitialState: function() {
@@ -48,8 +49,12 @@ var SelectDoctorPage = React.createClass({
         pageTemplate = <div className="form" id="form">
           <div className="formField">
             {this.state.data.map(function (item, index) {
+              var followId = 'follow_' + item.id;
               return (
-                <OptionButton key={item.id} data={item}/>
+                <div className="buttonGroup">
+                  <OptionButton key={item.id} data={item}/>
+                  <OptionFollowButton key={followId} data={item}/>
+                </div>
               )
             })}
           </div>
@@ -60,7 +65,7 @@ var SelectDoctorPage = React.createClass({
     }
 
     return(
-      <div id="content" className="content">
+      <div>
         {pageTemplate}
       </div>
     );
