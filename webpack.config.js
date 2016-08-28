@@ -16,11 +16,11 @@ var babelPlugin = new webpack.DefinePlugin({
 
 
 module.exports = {
-  entry: ['./js/app.js'],
+  entry: {index: './js/app.js', background: './js/background.js'},
   devtool: "inline-source-map",
   output: {
     path: path.join(__dirname, 'public'),
-    filename: 'index.js',
+    filename: '[name].js',
     publicPath: '/public/'
   },
   resolve: {

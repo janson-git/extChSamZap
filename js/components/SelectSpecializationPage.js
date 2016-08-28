@@ -22,9 +22,9 @@ var PageSelectSpec = React.createClass({
         if (response.status !== 200) {
           this.setState({error: true});
         } else {
-          window.loadedHtml.innerHTML = response.responseText;
-          var data = window.parseListDataOnPage();
-          var counters = window.parsePageForTicketCounts('codespec');
+          window.parser.loadedHtml.innerHTML = response.responseText;
+          var data = window.parser.parseListDataOnPage();
+          var counters = window.parser.parsePageForTicketCounts('codespec');
 
           data.map(function(item, index) {
             var count = 0;

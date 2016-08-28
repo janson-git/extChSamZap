@@ -22,9 +22,9 @@ var SelectDoctorPage = React.createClass({
         if (response.status !== 200) {
           this.setState({error: true});
         } else {
-          window.loadedHtml.innerHTML = response.responseText;
-          var data = window.parseListDataOnPage();
-          var counters = window.parsePageForTicketCounts('codemed');
+          window.parser.loadedHtml.innerHTML = response.responseText;
+          var data = window.parser.parseListDataOnPage();
+          var counters = window.parser.parsePageForTicketCounts('codemed');
 
           data.map(function(item, index) {
             var count = 0;
@@ -53,7 +53,7 @@ var SelectDoctorPage = React.createClass({
               return (
                 <div className="buttonGroup">
                   <OptionButton key={item.id} data={item}/>
-                  <OptionFollowButton key={followId} data={item}/>
+                  <OptionFollowButton key={followId} data={item} type="doctor"/>
                 </div>
               )
             })}

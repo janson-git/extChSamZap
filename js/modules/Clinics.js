@@ -73,5 +73,7 @@ var Clinics = {
   }
 };
 
-
-module.exports = Clinics;
+// если вдруг подключили файл напрямую
+if (typeof module !== 'undefined') {
+  module.exports = Clinics;
+}

@@ -1,63 +1,8 @@
 var EventEmitter = require('modules/EventEmitter');
+var getParser = require('modules/parser');
 
 window.ee = new EventEmitter();
-
-// Для разбора HTML, полученого по запросу
-window.view = chrome.extension.getViews()[0];
-window.loadedHtml = view.document.createElement('html');
-
-window.$ = function(selector) {
-  if (selector.indexOf('#') !== 0) {
-    return window.loadedHtml.querySelectorAll(selector);
-  }
-  return window.loadedHtml.querySelector(selector);
-};
-
-/**
- * Ищет в загруженом документе тег input id="listreturn" и вытаскивает оттуда данные
- * @returns {Array}
- */
-window.parseListDataOnPage = function() {
-  // варианты на выбор передаются в <input id="listreturn">
-  var listStr = $('#listreturn').value;
-  var list = listStr.split(';');
-  var vals = []; // array of {specKey: specTitle} pairs
-  for (var i in list) {
-    var s = list[i].split('-');
-    vals.push({id: s[0], title: s[1]});
-  }
-  return vals;
-};
-
-/**
- * Ищет в загруженом документе активные (зелёные) кнопки с номерками докторов
- * @param type string Возможные значения 'codemed' (кнопки докторов), 'codespec' (кнопки специальностей)
- * @return {Object}
- */
-window.parsePageForTicketCounts = function(type) {
-  var onclickValue = type || 'codemed';
-  var counters = {};
-
-  var enabledDoctors = $('button.SM_ACTIV[onClick*=' + onclickValue + ']');
-  var i;
-  for (i in enabledDoctors) {
-    var item = enabledDoctors[i];
-    if (typeof item === 'object' && item.hasAttribute('onclick')) {
-      var reg = new RegExp(".*" + onclickValue + "\.value='([^']*)'", 'i');
-      // var reg = /.*codemed\.value='([^']*)'/i;
-      var itemId = reg.exec(item.getAttribute('onclick'))[1];
-
-      // распарсим количество номерков с кнопки
-      var buttonText = item.querySelector('span').innerText;
-      var ticketsNum = /.*НОМЕРКОВ:\s?([\d]*).*/i.exec(buttonText)[1];
-
-      counters[itemId + ''] = parseInt(ticketsNum);
-    }
-  }
-  return counters;
-};
-
-
+window.parser = getParser();
 
 
 var React = require('react');
@@ -109,7 +54,8 @@ var App = React.createClass({
     return {
       page: 1,
       clinicId: undefined,
-      specId: undefined
+      specId: undefined,
+      doctorId: undefined
     };
   },
   componentDidMount: function() {
@@ -148,9 +94,40 @@ var App = React.createClass({
 
     window.ee.addListener('Buttons.follow', function(data) {
       console.log('data of follow: ', data);
+      console.log('app state: ', self.state);
 
-      // TODO: при нажатии на кнопку "Следить" надо сохранять в Local Storage
-      // TODO: и запускать фоновый процесс.
+      // при нажатии на кнопку "Следить" надо сохранять в Local Storage
+      // и уведомлять фоновый процесс об изменениях.
+      if (data.type === 'doctor') {
+        self.setState({doctorId: data.value});
+        chrome.storage.local.set({
+          clinicId: self.state.clinicId,
+          specId: self.state.specId,
+          doctorId: data.value
+        });
+
+        chrome.runtime.sendMessage({
+          "name": "Follow.Doctor",
+          "clinicId": self.state.clinicId,
+          "specId": self.state.specId,
+          "doctorId": data.value
+        });
+
+      } else if (data.type === 'spec') {
+        self.setState({specId: data.value});
+        chrome.storage.local.set({
+          clinicId: self.state.clinicId,
+          specId: data.value
+        });
+        chrome.storage.local.remove('doctorId');
+
+        chrome.runtime.sendMessage({
+          "name": "Follow.Spec",
+          "clinicId": self.state.clinicId,
+          "specId": data.value
+        });
+      }
+
     });
   },
   componentWillUnmount: function() {
