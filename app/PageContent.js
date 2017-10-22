@@ -1,10 +1,9 @@
 import React from 'react';
 import SelectClinicPageContainer from 'containers/SelectClinicPageContainer';
 import {connect} from 'react-redux';
-// var PageSelectSpec = require('../js/components/SelectSpecializationPage');
-// var PageSelectDoctor = require('../js/components/SelectDoctorPage');
 import AppStates from 'constants/AppStates';
 import SelectSpecialityPageContainer from './containers/SelectSpecialityPageContainer';
+import SelectDoctorPageContainer from './containers/SelectDoctorPageContainer';
 
 
 class PageContent extends React.Component {

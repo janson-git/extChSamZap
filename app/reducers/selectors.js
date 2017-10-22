@@ -8,14 +8,14 @@ const initialState = {
 
 const actionsMap = {
   [ActionTypes.SELECTED_CLINIC](state, action) {
-    return [{
+    return Object.assign({}, state, {
       selectedClinic: action.id
-    }, ...state];
+    });
   },
   [ActionTypes.SELECTED_SPECIALITY](state, action) {
-    return [{
+    return Object.assign({}, state, {
       selectedSpeciality: action.id
-    }, ...state];
+    });
   }
 };
 
