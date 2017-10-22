@@ -1,8 +1,12 @@
-var React = require('react');
+import React from 'react';
 
-var ClinicOption = React.createClass({
-  render: function() {
-    var selected = this.props.data.selected ? 'selected' : '';
+export default class SelectListItem extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const selected = this.props.data.selected ? 'selected' : '';
     if (selected) {
       return (
         <option value={this.props.data.id} selected>{this.props.data.title}</option>
@@ -12,6 +16,4 @@ var ClinicOption = React.createClass({
       <option value={this.props.data.id} >{this.props.data.title}</option>
     );
   }
-});
-
-module.exports = ClinicOption;
+}

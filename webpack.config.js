@@ -25,10 +25,13 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.css'],
-    modulesDirectories: ['node_modules', 'js']
+    modulesDirectories: ['node_modules', 'js', 'app']
   },
   plugins: [
-    babelPlugin
+    // babelPlugin,
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development')
+    })
   ],
   module: {
     loaders: [
@@ -39,7 +42,20 @@ module.exports = {
         query: {
           presets:['react']
         }
-      }
+      },
+      {
+        loader: "babel-loader",
+        // Skip any files outside of your project's `src` directory
+        exclude: [
+          path.resolve(__dirname, "node_modules"),
+        ],
+        // Only run `.js` and `.jsx` files through Babel
+        test: /\.jsx?$/,
+        // Options to configure babel with
+        query: {
+          presets: ['es2015', 'react'],
+        }
+      },
     ]
   },
 

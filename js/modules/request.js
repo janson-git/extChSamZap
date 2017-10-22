@@ -1,6 +1,7 @@
-if (typeof require !== 'undefined') {
-  var Clinics = require('modules/Clinics');
-}
+// if (typeof require !== 'undefined') {
+//   var Clinics = require('modules/Clinics');
+// }
+import Clinics from '../../app/constants/Clinics';
 
 /////////// REQUESTS ////////////////
 // запрос на список врачей (44 - невропатолог)

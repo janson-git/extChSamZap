@@ -110,7 +110,7 @@ function goBackOneStep(e) {
   }
 }
 
-// document.getElementById('selectClinic').addEventListener('click', goForSpecSelect);
+// document.getElementById('saveSelectedClinicId').addEventListener('click', goForSpecSelect);
 document.getElementById('back').addEventListener('click', goBackOneStep);
 goForClinicSelect();
 

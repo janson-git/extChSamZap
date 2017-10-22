@@ -1,15 +1,12 @@
-var React = require('react');
+import React from 'react';
 
-var OptionFollowButton = React.createClass({
+const OptionFollowButton = React.createClass({
   onButtonClick: function(e) {
-    console.log(e.target);
-    e.preventDefault();
-
-    var followType = undefined;
+    let followType = undefined;
     if (e.target.attributes.length > 0 && e.target.attributes.type !== undefined) {
       followType = e.target.attributes.type.value;
     }
-    ee.emit('Buttons.follow', {value: e.target.value, type: followType});
+    this.props.onClick(e.target.value, followType);
   },
   render: function() {
     return (
@@ -22,4 +19,4 @@ var OptionFollowButton = React.createClass({
   }
 });
 
-module.exports = OptionFollowButton;
+export default OptionFollowButton;
