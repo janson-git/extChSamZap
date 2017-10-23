@@ -14,11 +14,12 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
+
   return {
     onNextButtonClick: (selectedDoctorId) => {
       console.log('Doctor Page Container on next button:', selectedDoctorId);
       // save to store and load ??
-      // dispatch(Actions.saveSelectedSpecialityId(selectedDoctorId));
+      dispatch(Actions.saveSelectedDoctorId(selectedDoctorId));
       // Actions.getDoctorListBySpecialityId(dispatch, selectedClinicId, selectedDoctorId);
     },
     onFollowButtonClick: (selectedDoctorId, followType) => {

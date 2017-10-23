@@ -57,19 +57,7 @@ export function getDoctorListBySpecialityId(dispatch, clinicId, specId) {
   });
 }
 
-export function selectDoctor(id) {
-    return {type: ActionTypes.SELECTED_DOCTOR, id};
+export function saveSelectedDoctorId(id) {
+  return {type: ActionTypes.SELECTED_DOCTOR, id};
 }
 
-export function requestClinicList() {
-    // loads from configuration
-    return {type: ActionTypes.GET_CLINIC_LIST_DATA};
-}
-
-export function requestSpecialistList() {
-    return {type: ActionTypes.GET_SPECIALITY_LIST_DATA};
-}
-
-export function requestDoctorList() {
-    return {type: ActionTypes.GET_DOCTOR_LIST_DATA};
-}

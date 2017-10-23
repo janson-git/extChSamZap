@@ -16,7 +16,12 @@ const actionsMap = {
     return Object.assign({}, state, {
       selectedSpeciality: action.id
     });
-  }
+  },
+  [ActionTypes.SELECTED_DOCTOR](state, action) {
+    return Object.assign({}, state, {
+      selectedDoctor: action.id
+    });
+  },
 };
 
 export default function selectors(state = initialState, action) {
