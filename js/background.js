@@ -6,6 +6,8 @@ var parser = getParser();
 function makeRequestsWithStorageData() {
   ////// возможно у нас есть что-то сохранёное в настройках расширения. Сделаем запрос с этими данными
   chrome.storage.local.get(['clinicId', 'specId', 'doctorId'], function (items) {
+    console.log('NEW BG SCRIPT!!!');
+    return;
     console.log('ITEMS', items);
     if (items.clinicId === undefined) {
       return; //  Не задана клиника для запроса
@@ -116,6 +118,8 @@ var notificationsData = [];
 // Ждём уведомления обо всяких событиях из окна настроек
 chrome.runtime.onMessage.addListener(function(message, sender, callback) {
   console.log('ON MESSAGE', message, sender);
+  console.log('NEW BG SCRIPT');
+  return;
   // если пришло сообщение что нужно сдёрнуть список по специальности
   if (message.hasOwnProperty('type') && message.type === 'specList') {
     var i;
@@ -149,7 +153,7 @@ function $(selector) {
 }
 
 xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
-  if (xhr.readyState != 4) {
+  if (xhr.readyState !== 4) {
     return;
   }
 

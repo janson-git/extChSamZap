@@ -1,14 +1,21 @@
 import React from 'react';
 
-const OptionFollowButton = React.createClass({
-  onButtonClick: function(e) {
+export default class OptionFollowButton extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onButtonClick = this.onButtonClick.bind(this);
+  }
+
+  onButtonClick(e) {
     let followType = undefined;
     if (e.target.attributes.length > 0 && e.target.attributes.type !== undefined) {
       followType = e.target.attributes.type.value;
     }
     this.props.onClick(e.target.value, followType);
-  },
-  render: function() {
+  }
+
+  render() {
     return (
         <button className="follow"
                 value={this.props.data.id}
@@ -17,6 +24,4 @@ const OptionFollowButton = React.createClass({
         >Следить</button>
     );
   }
-});
-
-export default OptionFollowButton;
+};

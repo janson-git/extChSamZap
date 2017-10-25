@@ -1,6 +1,9 @@
 function makeRequestsWithStorageData() {
   ////// возможно у нас есть что-то сохранёное в настройках расширения. Сделаем запрос с этими данными
   chrome.storage.local.get(['clinicId', 'specialityIds'], function (items) {
+
+    // FIXME:
+    return;
     console.log('ITEMS', items);
     if (items.clinicId === undefined) {
       return; //  Не задана клиника для запроса

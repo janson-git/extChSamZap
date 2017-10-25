@@ -1,13 +1,15 @@
 import { combineReducers } from 'redux';
 import selectors from './selectors';
 import requests from './requests';
+import settings from './settings';
 import * as ActionTypes from '../constants/ActionTypes';
 import AppStates from '../constants/AppStates';
 
 export default combineReducers({
   selectors,
   requests,
-  appState
+  appState,
+  settings
 });
 
 function appState(state = 1, action) {

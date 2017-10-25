@@ -61,3 +61,8 @@ export function saveSelectedDoctorId(id) {
   return {type: ActionTypes.SELECTED_DOCTOR, id};
 }
 
+
+export function saveFollowSettings(objectId, followType) {
+  console.log('saveFollowSettings action for ', objectId, followType);
+  return {type: ActionTypes.SET_FOLLOW_SETTINGS, data: {id: objectId, type: followType}};
+}
