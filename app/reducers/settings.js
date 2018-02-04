@@ -1,30 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import SettingsStorage from '../../js/modules/SettingsStorage';
 
-const settings = function(state = {}, action) {
-  switch (action.type) {
-    case ActionTypes.SET_FOLLOW_SETTINGS:
-      chrome.storage.local.set(
-        {followSettings: action.data},
-        () => {
-          console.log('SETTINGS SAVED!');
-          chrome.storage.local.get(['followSettings'], (items) => console.log(items));
-        }
-      );
-      break;
-    case ActionTypes.SELECTED_CLINIC:
-      chrome.storage.local.set(
-        {clinicId: action.data.clinicId},
-        () => {
-          console.log('SETTINGS SAVED!');
-          chrome.storage.local.get(['followSettings'], (items) => console.log(items));
-        }
-      );
-      break;
-  }
-  return state;
+const initialFollowState = {
+  id: '',
+  type: '',
 };
-
-export default settings;
 
 const actionsMap = {
   [ActionTypes.SELECTED_CLINIC](state, action) {
@@ -42,9 +22,15 @@ const actionsMap = {
       selectedDoctor: action.id
     });
   },
+  [ActionTypes.SET_FOLLOW_SETTINGS](state, action) {
+    SettingsStorage.saveFollowSettings(action.data);
+    return Object.assign({}, state, {
+      followSettings: {id: action.id, type: action.data.type}
+    });
+  },
 };
 
-export default function selectors(state = initialState, action) {
+export default function selectors(state = initialFollowState, action) {
   const reduceFn = actionsMap[action.type];
   if (!reduceFn) {
     return state;

@@ -1,3 +1,5 @@
+import * as windows1251 from 'windows-1251';
+
 const getParser = function() {
   var self = this;
 
@@ -52,7 +54,11 @@ const getParser = function() {
 
         // распарсим количество номерков с кнопки
         var buttonText = item.querySelector('span').innerText;
-        var ticketsNum = /.*НОМЕРКОВ:\s?([\d]*).*/i.exec(buttonText)[1];
+        console.log(buttonText);
+
+        const n = windows1251.decode('НОМЕРКОВ:');
+        const regExp = new RegExp('.*' + n + '\\s?([\\d]*).*', 'i');
+        var ticketsNum = regExp.exec(buttonText)[1];
 
         counters[itemId + ''] = parseInt(ticketsNum);
       }

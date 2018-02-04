@@ -152,7 +152,7 @@ function $(selector) {
   return loadedHtml.querySelectorAll(selector);
 }
 
-xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
+const xhrOnReadyChangeCallback = function(xhr, requestData) { // (3)
   if (xhr.readyState !== 4) {
     return;
   }

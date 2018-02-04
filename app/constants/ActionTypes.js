@@ -11,3 +11,6 @@ export const SELECTED_SPECIALITY = 'SELECTED_SPECIALITY';
 export const SELECTED_DOCTOR = 'SELECTED_DOCTOR';
 
 export const SET_FOLLOW_SETTINGS = 'SET_FOLLOW_SETTINGS';
+
+// сохраняем результаты выбора в chrome storage для работы background скрипта
+export const CHROME_STORAGE_SAVE_SEARCH_SETTINGS = 'CHROME_STORAGE_SAVE_SEARCH_SETTINGS';

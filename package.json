@@ -26,6 +26,7 @@
     "babel-loader": "^6.2.4",
     "babel-core": "^6.10.4",
     "webpack": "^1.12.12",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "windows-1251": "^1.0.0"
   }
 }
